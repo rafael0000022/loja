@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meus Produtos Digitais</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #00e676;
+    --green-dark: #00c853;
+    --green-dim: #00e67622;
+    --black: #0a0a0a;
+    --black2: #111111;
+    --black3: #1a1a1a;
+    --black4: #222222;
+    --white: #f5f5f5;
+    --white-dim: rgba(245,245,245,0.08);
+    --white-mid: rgba(245,245,245,0.55);
+    --radius: 10px;
+    --card-w: 220px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--black2); }
+  ::-webkit-scrollbar-thumb { background: var(--green-dark); border-radius: 3px; }
+
+  /* ─── HEADER ─── */
+  header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 48px;
+    background: linear-gradient(to bottom, rgba(10,10,10,0.98) 0%, transparent 100%);
+    transition: background .3s;
+  }
+  header.scrolled { background: rgba(10,10,10,0.97); }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 3px;
+    color: var(--green);
+    text-shadow: 0 0 30px var(--green);
+    cursor: pointer;
+  }
+
+  .header-actions { display: flex; gap: 12px; align-items: center; }
+
+  .btn {
+    padding: 9px 22px;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .85rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all .2s;
+  }
+  .btn-ghost {
+    background: transparent;
+    border: 1.5px solid var(--green);
+    color: var(--green);
+  }
+  .btn-ghost:hover { background: var(--green-dim); }
+  .btn-solid {
+    background: var(--green);
+    color: var(--black);
+  }
+  .btn-solid:hover { background: var(--green-dark); transform: translateY(-1px); }
+
+  /* ─── SECTION ─── */
+  section { padding: 60px 48px; }
+  #productsSection { padding-top: 100px; }
+  @media(max-width:640px) { section { padding: 50px 18px; } #productsSection { padding-top: 80px; } }
+
+  .section-header {
+    display: flex; align-items: baseline; gap: 16px;
+    margin-bottom: 28px;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 2px;
+    color: var(--white);
+  }
+  .section-tag {
+    font-size: .7rem; font-weight: 600; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--green);
+  }
+
+  /* ─── GRID ─── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--card-w), 1fr));
+    gap: 18px;
+  }
+
+  /* ─── CARD ─── */
+  .card {
+    background: var(--black3);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform .3s, box-shadow .3s;
+    position: relative;
+  }
+  .card:hover {
+    transform: scale(1.04) translateY(-4px);
+    box-shadow: 0 16px 48px rgba(0,230,118,.18);
+    z-index: 2;
+  }
+  .card:hover .card-overlay { opacity: 1; }
+  .card:hover .card-info { bottom: 0; }
+
+  .card-img-wrap {
+    position: relative;
+    padding-top: 140%;
+    overflow: hidden;
+    background: var(--black4);
+  }
+  .card-img-wrap img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform .4s;
+  }
+  .card:hover .card-img-wrap img { transform: scale(1.06); }
+
+  .card-badge {
+    position: absolute; top: 10px; left: 10px;
+    background: var(--green); color: var(--black);
+    font-size: .6rem; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; padding: 4px 10px; border-radius: 4px;
+    z-index: 2;
+  }
+
+  .card-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.1) 60%, transparent 100%);
+    opacity: 0; transition: opacity .3s;
+  }
+
+  .card-info {
+    position: absolute; bottom: -20px; left: 0; right: 0;
+    padding: 16px 14px 14px;
+    transition: bottom .3s;
+    z-index: 3;
+  }
+  .card-name {
+    font-weight: 600; font-size: .9rem; margin-bottom: 4px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .card-desc {
+    font-size: .75rem; color: var(--white-mid); margin-bottom: 12px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .card-cta {
+    width: 100%; padding: 9px 0; border-radius: 6px;
+    background: var(--green); color: var(--black);
+    font-weight: 700; font-size: .8rem;
+    border: none; cursor: pointer; transition: background .2s;
+    letter-spacing: 1px;
+  }
+  .card-cta:hover { background: var(--green-dark); }
+
+  /* card placeholder */
+  .card-placeholder {
+    border: 2px dashed var(--white-dim);
+    border-radius: var(--radius);
+    min-height: 300px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 10px;
+    color: var(--white-mid);
+    font-size: .85rem;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+  }
+  .card-placeholder:hover { border-color: var(--green); background: var(--green-dim); color: var(--green); }
+  .card-placeholder svg { width: 36px; height: 36px; opacity: .5; }
+
+  /* ─── EMPTY STATE ─── */
+  .empty-state {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 80px 24px; gap: 16px; color: var(--white-mid); text-align: center;
+  }
+  .empty-state svg { width: 64px; height: 64px; opacity: .3; }
+  .empty-state p { font-size: .95rem; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--white-dim);
+    padding: 32px 48px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+    color: var(--white-mid); font-size: .8rem;
+  }
+  .footer-logo { font-family: 'Bebas Neue'; font-size: 1.2rem; color: var(--green); letter-spacing: 2px; }
+
+  /* ─── MODAL OVERLAY ─── */
+  .modal-bg {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,.85);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s;
+    padding: 16px;
+  }
+  .modal-bg.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--black2);
+    border: 1px solid var(--white-dim);
+    border-radius: 14px;
+    width: 100%; max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: translateY(24px);
+    transition: transform .25s;
+    padding: 36px 32px;
+  }
+  .modal-bg.open .modal { transform: translateY(0); }
+
+  .modal-title {
+    font-family: 'Bebas Neue'; font-size: 1.8rem; letter-spacing: 2px;
+    color: var(--green); margin-bottom: 24px;
+  }
+
+  /* ─── FORM ─── */
+  .form-group { margin-bottom: 18px; }
+  label { display: block; font-size: .78rem; font-weight: 600;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--white-mid); margin-bottom: 7px; }
+  input, textarea, select {
+    width: 100%; padding: 12px 14px;
+    background: var(--black3); border: 1.5px solid var(--black4);
+    border-radius: 8px; color: var(--white);
+    font-family: 'DM Sans', sans-serif; font-size: .9rem;
+    transition: border-color .2s;
+    outline: none;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--green); }
+  textarea { resize: vertical; min-height: 90px; }
+  select option { background: var(--black3); }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .img-preview {
+    width: 100%; height: 160px; border-radius: 8px;
+    object-fit: cover; margin-top: 10px;
+    border: 1.5px solid var(--black4);
+    display: none;
+  }
+  .img-preview.show { display: block; }
+
+  .modal-actions { display: flex; gap: 12px; margin-top: 28px; }
+  .modal-actions .btn { flex: 1; }
+  .btn-danger { background: #c0392b; color: #fff; border: none; }
+  .btn-danger:hover { background: #e74c3c; }
+
+  /* ─── LOGIN ─── */
+  .login-wrap {
+    position: fixed; inset: 0; z-index: 300;
+    background: var(--black);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 0;
+    transition: opacity .5s;
+  }
+  .login-wrap.hidden { opacity: 0; pointer-events: none; }
+  .login-box {
+    background: var(--black2);
+    border: 1px solid var(--white-dim);
+    border-radius: 14px;
+    padding: 48px 40px;
+    width: 100%; max-width: 380px;
+  }
+  .login-logo { font-family: 'Bebas Neue'; font-size: 2.4rem; color: var(--green); letter-spacing: 4px; text-align: center; margin-bottom: 8px; }
+  .login-sub { text-align: center; color: var(--white-mid); font-size: .82rem; margin-bottom: 32px; }
+  .login-hint { color: var(--white-mid); font-size: .75rem; text-align: center; margin-top: 14px; }
+
+  /* ─── ADMIN PANEL ─── */
+  .admin-panel {
+    position: fixed; top: 0; right: -440px; bottom: 0; z-index: 150;
+    width: 420px; background: var(--black2);
+    border-left: 1px solid var(--white-dim);
+    overflow-y: auto;
+    transition: right .35s ease;
+    padding: 0;
+  }
+  .admin-panel.open { right: 0; }
+
+  .panel-header {
+    position: sticky; top: 0;
+    background: var(--black2);
+    border-bottom: 1px solid var(--white-dim);
+    padding: 20px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 1;
+  }
+  .panel-title { font-family: 'Bebas Neue'; font-size: 1.4rem; letter-spacing: 2px; color: var(--green); }
+  .close-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--white-dim); border: none; color: var(--white);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; transition: background .2s;
+  }
+  .close-btn:hover { background: rgba(255,255,255,.15); }
+
+  .panel-body { padding: 24px; }
+
+  .admin-card {
+    background: var(--black3);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px;
+    border: 1px solid var(--black4);
+    transition: border-color .2s;
+  }
+  .admin-card:hover { border-color: var(--green); }
+  .admin-card img {
+    width: 52px; height: 70px; border-radius: 6px; object-fit: cover;
+    background: var(--black4); flex-shrink: 0;
+  }
+  .admin-card-info { flex: 1; min-width: 0; }
+  .admin-card-name { font-weight: 600; font-size: .88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .admin-card-cat { font-size: .7rem; color: var(--green); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 2px; }
+  .admin-card-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .icon-btn {
+    width: 32px; height: 32px; border-radius: 6px; border: none;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background .2s;
+  }
+  .icon-btn-edit { background: rgba(0,230,118,.15); color: var(--green); }
+  .icon-btn-edit:hover { background: rgba(0,230,118,.3); }
+  .icon-btn-del { background: rgba(192,57,43,.15); color: #e74c3c; }
+  .icon-btn-del:hover { background: rgba(192,57,43,.3); }
+
+  .panel-add-btn {
+    width: 100%; padding: 13px; border-radius: 8px;
+    background: var(--green); color: var(--black); border: none;
+    font-weight: 700; font-size: .9rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: background .2s; margin-bottom: 20px;
+    letter-spacing: 1px;
+  }
+  .panel-add-btn:hover { background: var(--green-dark); }
+
+  .panel-stats {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    margin-bottom: 20px;
+  }
+  .stat-box {
+    background: var(--black3); border-radius: 8px; padding: 14px;
+    border: 1px solid var(--black4); text-align: center;
+  }
+  .stat-num { font-family: 'Bebas Neue'; font-size: 1.8rem; color: var(--green); }
+  .stat-label { font-size: .7rem; color: var(--white-mid); letter-spacing: 1.5px; text-transform: uppercase; }
+
+  .section-label {
+    font-size: .7rem; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--white-mid);
+    margin-bottom: 12px; margin-top: 4px;
+  }
+
+  /* ─── NOTIFICATION ─── */
+  .notif {
+    position: fixed; bottom: 28px; right: 28px; z-index: 500;
+    background: var(--black3); border: 1.5px solid var(--green);
+    color: var(--white); border-radius: 10px;
+    padding: 14px 22px; font-size: .88rem; font-weight: 500;
+    display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 8px 32px rgba(0,230,118,.2);
+    transform: translateY(20px); opacity: 0;
+    transition: all .35s;
+    pointer-events: none; max-width: 300px;
+  }
+  .notif.show { transform: translateY(0); opacity: 1; }
+  .notif .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes lineGrow {
+    0%, 100% { opacity: .4; transform: scaleY(.6); }
+    50%       { opacity: 1;  transform: scaleY(1); }
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media(max-width:640px) {
+    header { padding: 16px 18px; }
+    .admin-panel { width: 100%; right: -100%; }
+    .hero-title { font-size: 3.5rem; }
+    .form-row { grid-template-columns: 1fr; }
+    footer { flex-direction: column; text-align: center; }
+  }
+
+  .fade-in { opacity: 0; transform: translateY(20px); transition: opacity .5s, transform .5s; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- ─── LOGIN ─── -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-box">
+    <div class="login-logo">DIGISHOP</div>
+    <div class="login-sub">Área administrativa</div>
+    <div class="form-group">
+      <label>Usuário</label>
+      <input type="text" id="loginUser" placeholder="admin" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>Senha</label>
+      <input type="password" id="loginPass" placeholder="••••••••">
+    </div>
+    <button class="btn btn-solid btn-lg" style="width:100%;margin-top:8px" onclick="doLogin()">ENTRAR</button>
+    <div class="login-hint">Usuário: <b>admin</b> &nbsp;|&nbsp; Senha: <b>admin123</b></div>
+  </div>
+</div>
+
+<!-- ─── HEADER ─── -->
+<header id="header">
+  <div class="logo" onclick="scrollTop()">DIGISHOP</div>
+  <div class="header-actions">
+    <button class="btn btn-ghost" onclick="togglePanel()">⚙ Admin</button>
+  </div>
+</header>
+
+<!-- ─── PRODUCTS ─── -->
+<section id="productsSection">
+  <div class="section-header">
+    <h2 class="section-title" id="catalogTitle">CATÁLOGO</h2>
+    <span class="section-tag" id="productCount">0 produtos</span>
+  </div>
+  <div class="grid" id="productGrid">
+    <!-- cards injetados aqui -->
+  </div>
+  <div class="empty-state" id="emptyState" style="display:none">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 13h6m-3-3v6M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <p>Nenhum produto ainda.<br>Use o painel admin para adicionar o primeiro.</p>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-logo">DIGISHOP</div>
+  <span>© 2025 · Todos os direitos reservados</span>
+  <span style="color:var(--green)">Produtos Digitais</span>
+</footer>
+
+<!-- ─── ADMIN PANEL ─── -->
+<div class="admin-panel" id="adminPanel">
+  <div class="panel-header">
+    <span class="panel-title">⚙ Painel Admin</span>
+    <button class="close-btn" onclick="togglePanel()">✕</button>
+  </div>
+  <div class="panel-body">
+    <div class="panel-stats">
+      <div class="stat-box">
+        <div class="stat-num" id="statTotal">0</div>
+        <div class="stat-label">Produtos</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="statCats">0</div>
+        <div class="stat-label">Categorias</div>
+      </div>
+    </div>
+    <button class="panel-add-btn" onclick="openModal()">+ ADICIONAR PRODUTO</button>
+    <div class="section-label">Produtos cadastrados</div>
+    <div id="adminList"></div>
+  </div>
+</div>
+
+<!-- ─── MODAL ADD/EDIT ─── -->
+<div class="modal-bg" id="modalBg" onclick="closeModalBg(event)">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">NOVO PRODUTO</div>
+    <div class="form-group">
+      <label>Nome do Produto *</label>
+      <input type="text" id="fName" placeholder="Ex: Ebook Finanças Pessoais">
+    </div>
+    <div class="form-group">
+      <label>Descrição curta *</label>
+      <textarea id="fDesc" placeholder="Descreva brevemente o produto..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Categoria</label>
+      <select id="fCat">
+        <option>Ebook</option>
+        <option>Curso</option>
+        <option>Template</option>
+        <option>Mentoria</option>
+        <option>Planilha</option>
+        <option>Outro</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Link de Redirecionamento *</label>
+      <input type="url" id="fLink" placeholder="https://seu-link-de-venda.com">
+    </div>
+    <div class="form-group">
+      <label>URL da Imagem (capa)</label>
+      <input type="url" id="fImg" placeholder="https://..." oninput="previewImg()">
+      <img class="img-preview" id="imgPreview" src="" alt="Preview">
+      <div style="font-size:.72rem;color:var(--white-mid);margin-top:6px">Cole uma URL de imagem. Use sites como Unsplash, ImgBB, Imgur, etc.</div>
+    </div>
+    <div class="form-group">
+      <label>Destaque</label>
+      <select id="fBadge">
+        <option value="">Nenhum</option>
+        <option value="NOVO">NOVO</option>
+        <option value="HOT">HOT</option>
+        <option value="OFERTA">OFERTA</option>
+        <option value="EXCLUSIVO">EXCLUSIVO</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-solid" id="saveBtn" onclick="saveProduct()">SALVAR</button>
+    </div>
+    <div id="deleteRow" style="display:none;margin-top:12px">
+      <button class="btn btn-danger" style="width:100%" onclick="deleteProduct()">🗑 EXCLUIR PRODUTO</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── NOTIFICATION ─── -->
+<div class="notif" id="notif">
+  <div class="dot"></div>
+  <span id="notifMsg">Salvo com sucesso!</span>
+</div>
+
+<script>
+// ═══════════════════════════════
+//  STATE
+// ═══════════════════════════════
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'admin123';
+
+let products = JSON.parse(localStorage.getItem('digi_products') || '[]');
+if (!products.length) {
+  products = [
+    {
+      id: Date.now() + 1,
+      name: 'Ebook: Finanças do Zero',
+      desc: 'Aprenda a organizar suas finanças e investir com segurança. Método comprovado.',
+      cat: 'Ebook',
+      link: 'https://exemplo.com/ebook-financas',
+      img: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&q=80',
+      badge: 'HOT'
+    },
+    {
+      id: Date.now() + 2,
+      name: 'Curso: Instagram Pro',
+      desc: 'Do zero ao primeiro cliente em 30 dias. Estratégias reais para criadores de conteúdo.',
+      cat: 'Curso',
+      link: 'https://exemplo.com/curso-instagram',
+      img: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=400&q=80',
+      badge: 'EXCLUSIVO'
+    },
+    {
+      id: Date.now() + 3,
+      name: 'Pack de Templates Canva',
+      desc: '50 templates premium prontos para usar. Feed profissional em minutos.',
+      cat: 'Template',
+      link: 'https://exemplo.com/templates',
+      img: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&q=80',
+      badge: 'NOVO'
+    }
+  ];
+  save();
+}
+
+let editId = null;
+
+// ═══════════════════════════════
+//  PERSIST
+// ═══════════════════════════════
+function save() {
+  localStorage.setItem('digi_products', JSON.stringify(products));
+}
+
+// ═══════════════════════════════
+//  RENDER
+// ═══════════════════════════════
+function render() {
+  const grid = document.getElementById('productGrid');
+  const emptyState = document.getElementById('emptyState');
+  const adminList = document.getElementById('adminList');
+  const countEl = document.getElementById('productCount');
+  document.getElementById('statTotal').textContent = products.length;
+  const cats = new Set(products.map(p => p.cat)).size;
+  document.getElementById('statCats').textContent = cats;
+  countEl.textContent = products.length + (products.length === 1 ? ' produto' : ' produtos');
+
+  // public grid
+  if (products.length === 0) {
+    grid.innerHTML = '';
+    emptyState.style.display = 'flex';
+  } else {
+    emptyState.style.display = 'none';
+    grid.innerHTML = products.map(p => `
+      <div class="card" onclick="goProduct('${p.link}')">
+        <div class="card-img-wrap">
+          <img src="${p.img || 'https://via.placeholder.com/400x560/1a1a1a/00e676?text=+'}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/400x560/1a1a1a/00e676?text=+'">
+          ${p.badge ? `<div class="card-badge">${p.badge}</div>` : ''}
+          <div class="card-overlay"></div>
+          <div class="card-info">
+            <div class="card-name">${p.name}</div>
+            <div class="card-desc">${p.desc}</div>
+            <button class="card-cta" onclick="event.stopPropagation();goProduct('${p.link}')">ACESSAR</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // admin list
+  adminList.innerHTML = products.length === 0
+    ? `<div style="text-align:center;color:var(--white-mid);font-size:.82rem;padding:24px 0">Nenhum produto cadastrado</div>`
+    : products.map(p => `
+      <div class="admin-card">
+        <img src="${p.img || 'https://via.placeholder.com/52x70/1a1a1a/00e676?text=+'}" alt="" onerror="this.src='https://via.placeholder.com/52x70/1a1a1a/00e676?text=+'">
+        <div class="admin-card-info">
+          <div class="admin-card-name">${p.name}</div>
+          <div class="admin-card-cat">${p.cat}</div>
+        </div>
+        <div class="admin-card-actions">
+          <button class="icon-btn icon-btn-edit" onclick="openEdit(${p.id})" title="Editar">✏</button>
+          <button class="icon-btn icon-btn-del" onclick="quickDelete(${p.id})" title="Excluir">🗑</button>
+        </div>
+      </div>
+    `).join('');
+
+  // fade-in cards
+  document.querySelectorAll('.card').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(16px)';
+    setTimeout(() => {
+      el.style.transition = 'opacity .4s, transform .4s, box-shadow .3s, transform .3s';
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    }, i * 70);
+  });
+}
+
+function goProduct(link) {
+  if (link) window.open(link, '_blank');
+}
+
+// ═══════════════════════════════
+//  LOGIN
+// ═══════════════════════════════
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    document.getElementById('loginWrap').classList.add('hidden');
+    render();
+    notify('Bem-vindo ao painel admin!');
+  } else {
+    notify('Usuário ou senha incorretos', true);
+  }
+}
+document.getElementById('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+document.getElementById('loginUser').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+// ═══════════════════════════════
+//  PANEL
+// ═══════════════════════════════
+function togglePanel() {
+  document.getElementById('adminPanel').classList.toggle('open');
+}
+
+// ═══════════════════════════════
+//  MODAL
+// ═══════════════════════════════
+function openModal(id = null) {
+  editId = id;
+  const modal = document.getElementById('modalBg');
+  const title = document.getElementById('modalTitle');
+  const delRow = document.getElementById('deleteRow');
+
+  if (id) {
+    const p = products.find(x => x.id === id);
+    if (!p) return;
+    title.textContent = 'EDITAR PRODUTO';
+    document.getElementById('fName').value = p.name;
+    document.getElementById('fDesc').value = p.desc;
+    document.getElementById('fCat').value = p.cat;
+    document.getElementById('fLink').value = p.link;
+    document.getElementById('fImg').value = p.img || '';
+    document.getElementById('fBadge').value = p.badge || '';
+    const prev = document.getElementById('imgPreview');
+    if (p.img) { prev.src = p.img; prev.classList.add('show'); }
+    else { prev.classList.remove('show'); }
+    delRow.style.display = 'block';
+  } else {
+    title.textContent = 'NOVO PRODUTO';
+    ['fName','fDesc','fLink','fImg'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('fCat').value = 'Ebook';
+    document.getElementById('fBadge').value = '';
+    document.getElementById('imgPreview').classList.remove('show');
+    delRow.style.display = 'none';
+  }
+  modal.classList.add('open');
+}
+
+function openEdit(id) { openModal(id); }
+
+function closeModal() {
+  document.getElementById('modalBg').classList.remove('open');
+  editId = null;
+}
+
+function closeModalBg(e) {
+  if (e.target === document.getElementById('modalBg')) closeModal();
+}
+
+function previewImg() {
+  const url = document.getElementById('fImg').value.trim();
+  const prev = document.getElementById('imgPreview');
+  if (url) { prev.src = url; prev.classList.add('show'); }
+  else { prev.classList.remove('show'); }
+}
+
+function saveProduct() {
+  const name = document.getElementById('fName').value.trim();
+  const desc = document.getElementById('fDesc').value.trim();
+  const link = document.getElementById('fLink').value.trim();
+  if (!name || !desc || !link) { notify('Preencha os campos obrigatórios (*)', true); return; }
+
+  const prod = {
+    id: editId || Date.now(),
+    name,
+    desc,
+    cat: document.getElementById('fCat').value,
+    link,
+    img: document.getElementById('fImg').value.trim(),
+    badge: document.getElementById('fBadge').value
+  };
+
+  if (editId) {
+    const idx = products.findIndex(p => p.id === editId);
+    products[idx] = prod;
+    notify('Produto atualizado!');
+  } else {
+    products.push(prod);
+    notify('Produto adicionado!');
+  }
+  save();
+  render();
+  closeModal();
+}
+
+function deleteProduct() {
+  if (!editId) return;
+  if (!confirm('Excluir este produto?')) return;
+  products = products.filter(p => p.id !== editId);
+  save(); render(); closeModal();
+  notify('Produto excluído.');
+}
+
+function quickDelete(id) {
+  if (!confirm('Excluir este produto?')) return;
+  products = products.filter(p => p.id !== id);
+  save(); render();
+  notify('Produto excluído.');
+}
+
+// ═══════════════════════════════
+//  NOTIFY
+// ═══════════════════════════════
+let notifTimer;
+function notify(msg, isErr = false) {
+  const el = document.getElementById('notif');
+  const dot = el.querySelector('.dot');
+  document.getElementById('notifMsg').textContent = msg;
+  dot.style.background = isErr ? '#e74c3c' : 'var(--green)';
+  el.style.borderColor = isErr ? '#e74c3c' : 'var(--green)';
+  el.classList.add('show');
+  clearTimeout(notifTimer);
+  notifTimer = setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+// ═══════════════════════════════
+//  UTILS
+// ═══════════════════════════════
+function scrollTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+// header scroll effect
+window.addEventListener('scroll', () => {
+  document.getElementById('header').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// keyboard shortcut
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeModal(); document.getElementById('adminPanel').classList.remove('open'); }
+});
+</script>
+</body>
+</html>
