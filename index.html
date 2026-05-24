@@ -3,532 +3,489 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meus Produtos Digitais</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>DIGISHOP</title>
 <style>
-  :root {
-    --green: #00e676;
-    --green-dark: #00c853;
-    --green-dim: #00e67622;
-    --black: #0a0a0a;
-    --black2: #111111;
-    --black3: #1a1a1a;
-    --black4: #222222;
-    --white: #f5f5f5;
-    --white-dim: rgba(245,245,245,0.08);
-    --white-mid: rgba(245,245,245,0.55);
-    --radius: 10px;
-    --card-w: 220px;
-  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0a; color: #fff; font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--black);
-    color: var(--white);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: var(--black2); }
-  ::-webkit-scrollbar-thumb { background: var(--green-dark); border-radius: 3px; }
-
-  /* ─── HEADER ─── */
+  /* HEADER */
   header {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 18px 48px;
-    background: linear-gradient(to bottom, rgba(10,10,10,0.98) 0%, transparent 100%);
-    transition: background .3s;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 32px; background: #0a0a0a; position: sticky; top: 0; z-index: 100;
+    border-bottom: 1px solid #1a1a1a;
   }
-  header.scrolled { background: rgba(10,10,10,0.97); }
+  .logo { color: #00ff88; font-size: 1.5rem; font-weight: 900; letter-spacing: 2px; }
+  .admin-btn {
+    background: none; border: none; cursor: pointer;
+    color: #333; font-size: 1.1rem; transition: color 0.3s;
+  }
+  .admin-btn:hover { color: #00ff88; }
 
-  .logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2rem; letter-spacing: 3px;
-    color: var(--green); text-shadow: 0 0 30px var(--green);
-    cursor: pointer;
+  /* CATÁLOGO */
+  .catalog-section { padding: 40px 32px; }
+  .catalog-header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 32px; }
+  .catalog-title { font-size: 1.4rem; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; }
+  .product-count { color: #00ff88; font-size: 0.85rem; font-weight: 700; letter-spacing: 2px; }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
   }
 
-  /* ícone engrenagem discreto */
-  .gear-btn {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: transparent; border: none;
-    color: rgba(245,245,245,0.2);
-    font-size: 1.1rem; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: color .2s, background .2s;
+  .product-card {
+    background: #111; border-radius: 10px; overflow: hidden;
+    cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid #1e1e1e;
   }
-  .gear-btn:hover { color: var(--green); background: var(--green-dim); }
-  .gear-btn.logged { color: var(--green); }
+  .product-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,255,136,0.15); }
 
-  .btn {
-    padding: 9px 22px; border-radius: 6px;
-    font-family: 'DM Sans', sans-serif; font-size: .85rem;
-    font-weight: 600; cursor: pointer; border: none; transition: all .2s;
-  }
-  .btn-ghost { background: transparent; border: 1.5px solid var(--green); color: var(--green); }
-  .btn-ghost:hover { background: var(--green-dim); }
-  .btn-solid { background: var(--green); color: var(--black); }
-  .btn-solid:hover { background: var(--green-dark); transform: translateY(-1px); }
-
-  /* ─── SECTION ─── */
-  section { padding: 60px 48px; }
-  #productsSection { padding-top: 100px; }
-  @media(max-width:640px) { section { padding: 50px 18px; } #productsSection { padding-top: 80px; } }
-
-  .section-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 28px; }
-  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 2px; color: var(--white); }
-  .section-tag { font-size: .7rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--green); }
-
-  /* ─── GRID ─── */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--card-w), 1fr)); gap: 18px; }
-
-  /* ─── CARD ─── */
-  .card {
-    background: var(--black3); border-radius: var(--radius);
-    overflow: hidden; cursor: pointer;
-    transition: transform .3s, box-shadow .3s; position: relative;
-  }
-  .card:hover { transform: scale(1.04) translateY(-4px); box-shadow: 0 16px 48px rgba(0,230,118,.18); z-index: 2; }
-  .card:hover .card-overlay { opacity: 1; }
-  .card:hover .card-info { bottom: 0; }
-
-  .card-img-wrap { position: relative; padding-top: 140%; overflow: hidden; background: var(--black4); }
-  .card-img-wrap img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
-  .card:hover .card-img-wrap img { transform: scale(1.06); }
-
-  .card-badge {
+  .product-img-wrap { position: relative; aspect-ratio: 3/4; overflow: hidden; }
+  .product-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+  .badge {
     position: absolute; top: 10px; left: 10px;
-    background: var(--green); color: var(--black);
-    font-size: .6rem; font-weight: 700; letter-spacing: 2px;
-    text-transform: uppercase; padding: 4px 10px; border-radius: 4px; z-index: 2;
+    background: #00ff88; color: #000; font-size: 0.65rem;
+    font-weight: 800; letter-spacing: 1px; padding: 3px 8px; border-radius: 4px;
+    text-transform: uppercase;
   }
-  .card-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.1) 60%, transparent 100%);
-    opacity: 0; transition: opacity .3s;
+
+  .product-info { padding: 12px; }
+  .product-name { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; line-height: 1.3; }
+  .product-desc { font-size: 0.75rem; color: #888; line-height: 1.4; margin-bottom: 12px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  .access-btn {
+    display: block; width: 100%; padding: 10px;
+    background: #00ff88; color: #000; font-weight: 800;
+    font-size: 0.85rem; letter-spacing: 1px; text-align: center;
+    border: none; border-radius: 6px; cursor: pointer;
+    text-decoration: none; text-transform: uppercase; transition: background 0.2s;
   }
-  .card-info { position: absolute; bottom: -20px; left: 0; right: 0; padding: 16px 14px 14px; transition: bottom .3s; z-index: 3; }
-  .card-name { font-weight: 600; font-size: .9rem; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .card-desc { font-size: .75rem; color: var(--white-mid); margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .card-cta { width: 100%; padding: 9px 0; border-radius: 6px; background: var(--green); color: var(--black); font-weight: 700; font-size: .8rem; border: none; cursor: pointer; transition: background .2s; letter-spacing: 1px; }
-  .card-cta:hover { background: var(--green-dark); }
+  .access-btn:hover { background: #00cc6a; }
 
-  /* ─── EMPTY STATE ─── */
-  .empty-state { display: flex; flex-direction: column; align-items: center; padding: 80px 24px; gap: 16px; color: var(--white-mid); text-align: center; }
-  .empty-state svg { width: 64px; height: 64px; opacity: .3; }
-  .empty-state p { font-size: .95rem; }
-
-  /* ─── FOOTER ─── */
-  footer { border-top: 1px solid var(--white-dim); padding: 32px 48px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; color: var(--white-mid); font-size: .8rem; }
-  .footer-logo { font-family: 'Bebas Neue'; font-size: 1.2rem; color: var(--green); letter-spacing: 2px; }
-
-  /* ─── MODAL GENÉRICO ─── */
-  .modal-bg {
-    position: fixed; inset: 0; z-index: 200;
-    background: rgba(0,0,0,.85);
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity .25s; padding: 16px;
+  .empty-state {
+    grid-column: 1/-1; text-align: center; padding: 80px 20px; color: #444;
   }
-  .modal-bg.open { opacity: 1; pointer-events: all; }
+  .empty-state p { font-size: 1rem; margin-top: 10px; }
+
+  /* FOOTER */
+  footer {
+    padding: 24px 32px; margin-top: 60px; border-top: 1px solid #1a1a1a;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.8rem; color: #555;
+  }
+  .footer-logo { color: #00ff88; font-weight: 900; letter-spacing: 2px; }
+  .footer-tag { color: #00ff88; }
+
+  /* MODAL ADMIN */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85); z-index: 1000;
+    justify-content: center; align-items: center; padding: 20px;
+  }
+  .modal-overlay.active { display: flex; }
   .modal {
-    background: var(--black2); border: 1px solid var(--white-dim);
-    border-radius: 14px; width: 100%; max-width: 520px;
-    max-height: 90vh; overflow-y: auto;
-    transform: translateY(24px); transition: transform .25s; padding: 36px 32px;
+    background: #111; border: 1px solid #222; border-radius: 14px;
+    width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto;
   }
-  .modal-bg.open .modal { transform: translateY(0); }
-  .modal-title { font-family: 'Bebas Neue'; font-size: 1.8rem; letter-spacing: 2px; color: var(--green); margin-bottom: 24px; }
-
-  /* ─── MINI MODAL SENHA ─── */
-  .pass-modal {
-    background: var(--black2); border: 1px solid var(--white-dim);
-    border-radius: 14px; width: 100%; max-width: 340px;
-    transform: translateY(24px); transition: transform .25s; padding: 32px 28px;
+  .modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 24px; border-bottom: 1px solid #1e1e1e;
   }
-  .modal-bg.open .pass-modal { transform: translateY(0); }
-  .pass-modal-title { font-family: 'Bebas Neue'; font-size: 1.5rem; letter-spacing: 2px; color: var(--green); margin-bottom: 6px; }
-  .pass-modal-sub { font-size: .78rem; color: var(--white-mid); margin-bottom: 20px; }
+  .modal-header h2 { font-size: 1rem; font-weight: 800; letter-spacing: 1px; }
+  .close-btn { background: none; border: none; color: #888; font-size: 1.3rem; cursor: pointer; }
+  .close-btn:hover { color: #fff; }
 
-  /* ─── FORM ─── */
-  .form-group { margin-bottom: 18px; }
-  label { display: block; font-size: .78rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--white-mid); margin-bottom: 7px; }
-  input, textarea, select { width: 100%; padding: 12px 14px; background: var(--black3); border: 1.5px solid var(--black4); border-radius: 8px; color: var(--white); font-family: 'DM Sans', sans-serif; font-size: .9rem; transition: border-color .2s; outline: none; }
-  input:focus, textarea:focus, select:focus { border-color: var(--green); }
-  textarea { resize: vertical; min-height: 90px; }
-  select option { background: var(--black3); }
+  .modal-body { padding: 24px; }
 
-  .img-preview { width: 100%; height: 160px; border-radius: 8px; object-fit: cover; margin-top: 10px; border: 1.5px solid var(--black4); display: none; }
+  /* LOGIN */
+  .login-form { display: flex; flex-direction: column; gap: 14px; }
+  .login-form input {
+    background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px;
+    padding: 12px 14px; color: #fff; font-size: 0.9rem; outline: none;
+  }
+  .login-form input:focus { border-color: #00ff88; }
+  .login-form button {
+    background: #00ff88; color: #000; font-weight: 800;
+    padding: 12px; border: none; border-radius: 8px; cursor: pointer;
+    font-size: 0.9rem; letter-spacing: 1px;
+  }
+  .login-form button:hover { background: #00cc6a; }
+  .login-error { color: #ff4444; font-size: 0.8rem; text-align: center; display: none; }
+
+  /* PAINEL ADMIN */
+  .admin-panel { display: none; flex-direction: column; gap: 20px; }
+  .admin-panel.active { display: flex; }
+
+  .panel-tabs { display: flex; gap: 8px; margin-bottom: 4px; }
+  .tab-btn {
+    flex: 1; padding: 9px; background: #1a1a1a; border: 1px solid #2a2a2a;
+    color: #888; border-radius: 8px; cursor: pointer; font-size: 0.8rem;
+    font-weight: 700; letter-spacing: 1px; transition: all 0.2s;
+  }
+  .tab-btn.active { background: #00ff88; color: #000; border-color: #00ff88; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* FORM PRODUTO */
+  .product-form { display: flex; flex-direction: column; gap: 12px; }
+  .product-form label { font-size: 0.75rem; color: #888; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px; display: block; }
+  .product-form input, .product-form textarea, .product-form select {
+    width: 100%; background: #1a1a1a; border: 1px solid #2a2a2a;
+    border-radius: 8px; padding: 10px 12px; color: #fff; font-size: 0.85rem;
+    outline: none; font-family: inherit;
+  }
+  .product-form input:focus, .product-form textarea:focus { border-color: #00ff88; }
+  .product-form textarea { resize: vertical; min-height: 80px; }
+  .img-preview { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 8px; display: none; margin-top: 6px; }
   .img-preview.show { display: block; }
 
-  .modal-actions { display: flex; gap: 12px; margin-top: 28px; }
-  .modal-actions .btn { flex: 1; }
-  .btn-danger { background: #c0392b; color: #fff; border: none; }
-  .btn-danger:hover { background: #e74c3c; }
-
-  /* ─── ADMIN PANEL ─── */
-  .admin-panel { position: fixed; top: 0; right: -440px; bottom: 0; z-index: 150; width: 420px; background: var(--black2); border-left: 1px solid var(--white-dim); overflow-y: auto; transition: right .35s ease; padding: 0; }
-  .admin-panel.open { right: 0; }
-
-  .panel-header { position: sticky; top: 0; background: var(--black2); border-bottom: 1px solid var(--white-dim); padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; z-index: 1; }
-  .panel-title { font-family: 'Bebas Neue'; font-size: 1.4rem; letter-spacing: 2px; color: var(--green); }
-  .close-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--white-dim); border: none; color: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: background .2s; }
-  .close-btn:hover { background: rgba(255,255,255,.15); }
-
-  .panel-body { padding: 24px; }
-
-  .admin-card { background: var(--black3); border-radius: 10px; margin-bottom: 12px; display: flex; align-items: center; gap: 14px; padding: 14px; border: 1px solid var(--black4); transition: border-color .2s; }
-  .admin-card:hover { border-color: var(--green); }
-  .admin-card img { width: 52px; height: 70px; border-radius: 6px; object-fit: cover; background: var(--black4); flex-shrink: 0; }
-  .admin-card-info { flex: 1; min-width: 0; }
-  .admin-card-name { font-weight: 600; font-size: .88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .admin-card-cat { font-size: .7rem; color: var(--green); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 2px; }
-  .admin-card-actions { display: flex; gap: 8px; flex-shrink: 0; }
-  .icon-btn { width: 32px; height: 32px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s; }
-  .icon-btn-edit { background: rgba(0,230,118,.15); color: var(--green); }
-  .icon-btn-edit:hover { background: rgba(0,230,118,.3); }
-  .icon-btn-del { background: rgba(192,57,43,.15); color: #e74c3c; }
-  .icon-btn-del:hover { background: rgba(192,57,43,.3); }
-
-  .panel-add-btn { width: 100%; padding: 13px; border-radius: 8px; background: var(--green); color: var(--black); border: none; font-weight: 700; font-size: .9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background .2s; margin-bottom: 20px; letter-spacing: 1px; }
-  .panel-add-btn:hover { background: var(--green-dark); }
-
-  .panel-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-  .stat-box { background: var(--black3); border-radius: 8px; padding: 14px; border: 1px solid var(--black4); text-align: center; }
-  .stat-num { font-family: 'Bebas Neue'; font-size: 1.8rem; color: var(--green); }
-  .stat-label { font-size: .7rem; color: var(--white-mid); letter-spacing: 1.5px; text-transform: uppercase; }
-
-  .section-label { font-size: .7rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--white-mid); margin-bottom: 12px; margin-top: 4px; }
-
-  /* ─── NOTIFICATION ─── */
-  .notif { position: fixed; bottom: 28px; right: 28px; z-index: 500; background: var(--black3); border: 1.5px solid var(--green); color: var(--white); border-radius: 10px; padding: 14px 22px; font-size: .88rem; font-weight: 500; display: flex; align-items: center; gap: 10px; box-shadow: 0 8px 32px rgba(0,230,118,.2); transform: translateY(20px); opacity: 0; transition: all .35s; pointer-events: none; max-width: 300px; }
-  .notif.show { transform: translateY(0); opacity: 1; }
-  .notif .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
-
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
-
-  @media(max-width:640px) {
-    header { padding: 16px 18px; }
-    .admin-panel { width: 100%; right: -100%; }
-    .modal { padding: 24px 18px; }
-    footer { flex-direction: column; text-align: center; }
+  .form-actions { display: flex; gap: 10px; margin-top: 4px; }
+  .btn-save {
+    flex: 1; background: #00ff88; color: #000; font-weight: 800;
+    padding: 11px; border: none; border-radius: 8px; cursor: pointer;
+    font-size: 0.85rem; letter-spacing: 1px;
   }
+  .btn-save:hover { background: #00cc6a; }
+  .btn-cancel {
+    padding: 11px 16px; background: #1a1a1a; color: #888;
+    border: 1px solid #2a2a2a; border-radius: 8px; cursor: pointer; font-size: 0.85rem;
+  }
+  .btn-cancel:hover { color: #fff; }
+
+  /* LISTA DE PRODUTOS NO PAINEL */
+  .admin-product-list { display: flex; flex-direction: column; gap: 10px; }
+  .admin-product-item {
+    display: flex; align-items: center; gap: 12px;
+    background: #1a1a1a; border-radius: 8px; padding: 10px 12px;
+    border: 1px solid #222;
+  }
+  .admin-product-item img { width: 44px; height: 58px; object-fit: cover; border-radius: 6px; background: #2a2a2a; }
+  .admin-item-info { flex: 1; }
+  .admin-item-name { font-size: 0.85rem; font-weight: 700; margin-bottom: 2px; }
+  .admin-item-badge { font-size: 0.7rem; color: #00ff88; }
+  .admin-item-actions { display: flex; gap: 6px; }
+  .btn-edit, .btn-delete {
+    padding: 6px 10px; border-radius: 6px; border: none; cursor: pointer;
+    font-size: 0.75rem; font-weight: 700;
+  }
+  .btn-edit { background: #1e3a2a; color: #00ff88; }
+  .btn-edit:hover { background: #00ff88; color: #000; }
+  .btn-delete { background: #3a1e1e; color: #ff6666; }
+  .btn-delete:hover { background: #ff4444; color: #fff; }
+
+  .status-msg { font-size: 0.8rem; text-align: center; padding: 8px; border-radius: 6px; display: none; }
+  .status-msg.success { background: #0a2a1a; color: #00ff88; display: block; }
+  .status-msg.error { background: #2a0a0a; color: #ff6666; display: block; }
+
+  .loading { text-align: center; padding: 40px; color: #444; font-size: 0.9rem; }
 </style>
 </head>
 <body>
 
-<!-- ─── HEADER ─── -->
-<header id="header">
-  <div class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">DIGISHOP</div>
-  <button class="gear-btn" id="gearBtn" onclick="gearClick()" title="Admin">⚙</button>
+<header>
+  <div class="logo">DIGISHOP</div>
+  <button class="admin-btn" onclick="openAdmin()" title="Painel Admin">⚙</button>
 </header>
 
-<!-- ─── PRODUCTS ─── -->
-<section id="productsSection">
-  <div class="section-header">
-    <h2 class="section-title">CATÁLOGO</h2>
-    <span class="section-tag" id="productCount">0 produtos</span>
-  </div>
-  <div class="grid" id="productGrid"></div>
-  <div class="empty-state" id="emptyState" style="display:none">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 13h6m-3-3v6M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-    <p>Nenhum produto ainda.</p>
-  </div>
-</section>
+<main>
+  <section class="catalog-section">
+    <div class="catalog-header">
+      <h2 class="catalog-title">Catálogo</h2>
+      <span class="product-count" id="product-count">0 PRODUTOS</span>
+    </div>
+    <div class="products-grid" id="products-grid">
+      <div class="loading">Carregando produtos...</div>
+    </div>
+  </section>
+</main>
 
-<!-- ─── FOOTER ─── -->
 <footer>
-  <div class="footer-logo">DIGISHOP</div>
+  <span class="footer-logo">DIGISHOP</span>
   <span>© 2025 · Todos os direitos reservados</span>
-  <span style="color:var(--green)">Produtos Digitais</span>
+  <span class="footer-tag">Produtos Digitais</span>
 </footer>
 
-<!-- ─── MINI MODAL SENHA ─── -->
-<div class="modal-bg" id="passBg" onclick="closePassBg(event)">
-  <div class="pass-modal">
-    <div class="pass-modal-title">⚙ Admin</div>
-    <div class="pass-modal-sub">Digite a senha para acessar o painel</div>
-    <div class="form-group">
-      <input type="password" id="passInput" placeholder="••••••••" autocomplete="off">
-    </div>
-    <div style="display:flex;gap:10px">
-      <button class="btn btn-ghost" style="flex:1" onclick="closePass()">Cancelar</button>
-      <button class="btn btn-solid" style="flex:1" onclick="checkPass()">ENTRAR</button>
-    </div>
-    <div id="passErr" style="color:#e74c3c;font-size:.78rem;margin-top:10px;display:none">Senha incorreta</div>
-  </div>
-</div>
-
-<!-- ─── ADMIN PANEL ─── -->
-<div class="admin-panel" id="adminPanel">
-  <div class="panel-header">
-    <span class="panel-title">⚙ Painel Admin</span>
-    <button class="close-btn" onclick="closePanel()">✕</button>
-  </div>
-  <div class="panel-body">
-    <div class="panel-stats">
-      <div class="stat-box">
-        <div class="stat-num" id="statTotal">0</div>
-        <div class="stat-label">Produtos</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-num" id="statCats">0</div>
-        <div class="stat-label">Categorias</div>
-      </div>
-    </div>
-    <button class="panel-add-btn" onclick="openModal()">+ ADICIONAR PRODUTO</button>
-    <div class="section-label">Produtos cadastrados</div>
-    <div id="adminList"></div>
-    <div style="margin-top:24px;border-top:1px solid var(--white-dim);padding-top:16px">
-      <button class="btn btn-ghost" style="width:100%;font-size:.78rem" onclick="doLogout()">Sair do painel</button>
-    </div>
-  </div>
-</div>
-
-<!-- ─── MODAL ADD/EDIT ─── -->
-<div class="modal-bg" id="modalBg" onclick="closeModalBg(event)">
+<!-- MODAL ADMIN -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
   <div class="modal">
-    <div class="modal-title" id="modalTitle">NOVO PRODUTO</div>
-    <div class="form-group">
-      <label>Nome do Produto *</label>
-      <input type="text" id="fName" placeholder="Ex: Ebook Finanças Pessoais">
+    <div class="modal-header">
+      <h2 id="modal-title">🔐 ACESSO ADMIN</h2>
+      <button class="close-btn" onclick="closeAdmin()">✕</button>
     </div>
-    <div class="form-group">
-      <label>Descrição curta *</label>
-      <textarea id="fDesc" placeholder="Descreva brevemente o produto..."></textarea>
-    </div>
-    <div class="form-group">
-      <label>Categoria</label>
-      <select id="fCat">
-        <option>Ebook</option>
-        <option>Curso</option>
-        <option>Template</option>
-        <option>Mentoria</option>
-        <option>Planilha</option>
-        <option>Outro</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>Link de Redirecionamento *</label>
-      <input type="url" id="fLink" placeholder="https://seu-link-de-venda.com">
-    </div>
-    <div class="form-group">
-      <label>URL da Imagem (capa)</label>
-      <input type="url" id="fImg" placeholder="https://..." oninput="previewImg()">
-      <img class="img-preview" id="imgPreview" src="" alt="Preview">
-      <div style="font-size:.72rem;color:var(--white-mid);margin-top:6px">Cole uma URL de imagem (Unsplash, ImgBB, Imgur...)</div>
-    </div>
-    <div class="form-group">
-      <label>Destaque</label>
-      <select id="fBadge">
-        <option value="">Nenhum</option>
-        <option value="NOVO">NOVO</option>
-        <option value="HOT">HOT</option>
-        <option value="OFERTA">OFERTA</option>
-        <option value="EXCLUSIVO">EXCLUSIVO</option>
-      </select>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
-      <button class="btn btn-solid" onclick="saveProduct()">SALVAR</button>
-    </div>
-    <div id="deleteRow" style="display:none;margin-top:12px">
-      <button class="btn btn-danger" style="width:100%" onclick="deleteProduct()">🗑 EXCLUIR PRODUTO</button>
-    </div>
-  </div>
-</div>
+    <div class="modal-body">
 
-<!-- ─── NOTIFICATION ─── -->
-<div class="notif" id="notif">
-  <div class="dot"></div>
-  <span id="notifMsg">Salvo!</span>
-</div>
+      <!-- LOGIN -->
+      <div id="login-section">
+        <div class="login-form">
+          <div>
+            <label style="font-size:0.75rem;color:#888;letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:6px;">Senha</label>
+            <input type="password" id="admin-password" placeholder="Digite a senha..." onkeydown="if(event.key==='Enter')doLogin()">
+          </div>
+          <p class="login-error" id="login-error">Senha incorreta!</p>
+          <button onclick="doLogin()">ENTRAR</button>
+        </div>
+      </div>
 
-<script>
-const ADMIN_PASS = 'admin123';
-let isLogged = false;
-let editId = null;
+      <!-- PAINEL -->
+      <div class="admin-panel" id="admin-panel">
+        <div class="panel-tabs">
+          <button class="tab-btn active" onclick="switchTab('add')">+ ADICIONAR</button>
+          <button class="tab-btn" onclick="switchTab('list')">📋 PRODUTOS</button>
+        </div>
 
-let products = JSON.parse(localStorage.getItem('digi_products') || '[]');
-if (!products.length) {
-  products = [
-    { id: 1, name: 'Ebook: Finanças do Zero', desc: 'Aprenda a organizar suas finanças e investir com segurança.', cat: 'Ebook', link: 'https://exemplo.com', img: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&q=80', badge: 'HOT' },
-    { id: 2, name: 'Curso: Instagram Pro', desc: 'Do zero ao primeiro cliente em 30 dias. Estratégias reais.', cat: 'Curso', link: 'https://exemplo.com', img: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=400&q=80', badge: 'EXCLUSIVO' },
-    { id: 3, name: 'Pack de Templates Canva', desc: '50 templates premium prontos para usar.', cat: 'Template', link: 'https://exemplo.com', img: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&q=80', badge: 'NOVO' }
-  ];
-  save();
-}
-
-render();
-
-function save() { localStorage.setItem('digi_products', JSON.stringify(products)); }
-
-function render() {
-  const grid = document.getElementById('productGrid');
-  const emptyState = document.getElementById('emptyState');
-  document.getElementById('productCount').textContent = products.length + (products.length === 1 ? ' produto' : ' produtos');
-  document.getElementById('statTotal').textContent = products.length;
-  document.getElementById('statCats').textContent = new Set(products.map(p => p.cat)).size;
-
-  if (!products.length) { grid.innerHTML = ''; emptyState.style.display = 'flex'; }
-  else {
-    emptyState.style.display = 'none';
-    grid.innerHTML = products.map(p => `
-      <div class="card" onclick="goProduct('${p.link}')">
-        <div class="card-img-wrap">
-          <img src="${p.img || 'https://via.placeholder.com/400x560/1a1a1a/00e676?text=+'}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/400x560/1a1a1a/00e676?text=+'">
-          ${p.badge ? `<div class="card-badge">${p.badge}</div>` : ''}
-          <div class="card-overlay"></div>
-          <div class="card-info">
-            <div class="card-name">${p.name}</div>
-            <div class="card-desc">${p.desc}</div>
-            <button class="card-cta" onclick="event.stopPropagation();goProduct('${p.link}')">ACESSAR</button>
+        <!-- ABA ADICIONAR/EDITAR -->
+        <div class="tab-content active" id="tab-add">
+          <div class="product-form">
+            <input type="hidden" id="edit-id">
+            <div>
+              <label>Nome do Produto</label>
+              <input type="text" id="prod-name" placeholder="Ex: Pack de Templates Canva">
+            </div>
+            <div>
+              <label>Descrição</label>
+              <textarea id="prod-desc" placeholder="Descreva o produto..."></textarea>
+            </div>
+            <div>
+              <label>URL da Imagem</label>
+              <input type="url" id="prod-img" placeholder="https://i.ibb.co/..." oninput="previewImg()">
+              <img class="img-preview" id="img-preview" alt="preview">
+            </div>
+            <div>
+              <label>Link de Acesso</label>
+              <input type="url" id="prod-link" placeholder="https://...">
+            </div>
+            <div>
+              <label>Badge (ex: EXCLUSIVO)</label>
+              <input type="text" id="prod-badge" placeholder="EXCLUSIVO" value="EXCLUSIVO">
+            </div>
+            <div class="form-actions">
+              <button class="btn-cancel" onclick="resetForm()">Limpar</button>
+              <button class="btn-save" onclick="saveProduct()">SALVAR</button>
+            </div>
+            <p class="status-msg" id="status-msg"></p>
           </div>
         </div>
-      </div>`).join('');
+
+        <!-- ABA LISTA -->
+        <div class="tab-content" id="tab-list">
+          <div class="admin-product-list" id="admin-list">
+            <div class="loading">Carregando...</div>
+          </div>
+        </div>
+
+        <button onclick="doLogout()" style="background:none;border:1px solid #2a2a2a;color:#555;padding:8px;border-radius:8px;cursor:pointer;font-size:0.8rem;">Sair</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- FIREBASE SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, push, set, remove, onValue, update }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSy8hEHJOis-ej56fNtwcZhIS75kQLlbj-OA",
+    authDomain: "digishop-9e538.firebaseapp.com",
+    databaseURL: "https://digishop-9e538-default-rtdb.firebaseio.com",
+    projectId: "digishop-9e538",
+    storageBucket: "digishop-9e538.firebasestorage.app",
+    messagingSenderId: "122052992541",
+    appId: "1:122052992541:web:12541a8fabd9249d6fb0f4"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const productsRef = ref(db, 'produtos');
+
+  // ---- RENDER LOJA ----
+  function renderCatalog(products) {
+    const grid = document.getElementById('products-grid');
+    const count = document.getElementById('product-count');
+    const entries = Object.entries(products || {});
+    count.textContent = entries.length + ' PRODUTO' + (entries.length !== 1 ? 'S' : '');
+
+    if (entries.length === 0) {
+      grid.innerHTML = '<div class="empty-state"><span style="font-size:2rem">📦</span><p>Nenhum produto cadastrado ainda.</p></div>';
+      return;
+    }
+
+    grid.innerHTML = entries.map(([id, p]) => `
+      <div class="product-card">
+        <div class="product-img-wrap">
+          ${p.imagem ? `<img src="${p.imagem}" alt="${p.nome}" onerror="this.style.display='none'">` : '<div style="width:100%;height:100%;background:#1a1a1a"></div>'}
+          ${p.badge ? `<span class="badge">${p.badge}</span>` : ''}
+        </div>
+        <div class="product-info">
+          <div class="product-name">${p.nome}</div>
+          <div class="product-desc">${p.descricao || ''}</div>
+          <a class="access-btn" href="${p.link || '#'}" target="_blank" rel="noopener">ACESSAR</a>
+        </div>
+      </div>
+    `).join('');
   }
 
-  document.getElementById('adminList').innerHTML = !products.length
-    ? `<div style="text-align:center;color:var(--white-mid);font-size:.82rem;padding:24px 0">Nenhum produto</div>`
-    : products.map(p => `
-      <div class="admin-card">
-        <img src="${p.img || 'https://via.placeholder.com/52x70/1a1a1a/00e676?text=+'}" onerror="this.src='https://via.placeholder.com/52x70/1a1a1a/00e676?text=+'">
-        <div class="admin-card-info">
-          <div class="admin-card-name">${p.name}</div>
-          <div class="admin-card-cat">${p.cat}</div>
-        </div>
-        <div class="admin-card-actions">
-          <button class="icon-btn icon-btn-edit" onclick="openEdit(${p.id})">✏</button>
-          <button class="icon-btn icon-btn-del" onclick="quickDelete(${p.id})">🗑</button>
-        </div>
-      </div>`).join('');
-
-  document.querySelectorAll('.card').forEach((el, i) => {
-    el.style.opacity = '0'; el.style.transform = 'translateY(16px)';
-    setTimeout(() => { el.style.transition = 'opacity .4s, transform .4s, box-shadow .3s, transform .3s'; el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }, i * 70);
+  onValue(productsRef, (snapshot) => {
+    renderCatalog(snapshot.val());
+    renderAdminList(snapshot.val());
   });
-}
 
-function goProduct(link) { if (link) window.open(link, '_blank'); }
+  // ---- SALVAR PRODUTO ----
+  window.saveProduct = function() {
+    const id = document.getElementById('edit-id').value;
+    const nome = document.getElementById('prod-name').value.trim();
+    const descricao = document.getElementById('prod-desc').value.trim();
+    const imagem = document.getElementById('prod-img').value.trim();
+    const link = document.getElementById('prod-link').value.trim();
+    const badge = document.getElementById('prod-badge').value.trim();
 
-// ─── ENGRENAGEM ───
-function gearClick() {
-  if (isLogged) { openPanel(); }
-  else { openPass(); }
-}
+    if (!nome || !link) {
+      showStatus('Preencha pelo menos o nome e o link!', 'error');
+      return;
+    }
 
-// ─── SENHA ───
-function openPass() {
-  document.getElementById('passInput').value = '';
-  document.getElementById('passErr').style.display = 'none';
-  document.getElementById('passBg').classList.add('open');
-  setTimeout(() => document.getElementById('passInput').focus(), 200);
-}
-function closePass() { document.getElementById('passBg').classList.remove('open'); }
-function closePassBg(e) { if (e.target === document.getElementById('passBg')) closePass(); }
+    const data = { nome, descricao, imagem, link, badge };
 
-function checkPass() {
-  const v = document.getElementById('passInput').value;
-  if (v === ADMIN_PASS) {
-    isLogged = true;
-    document.getElementById('gearBtn').classList.add('logged');
-    closePass();
-    openPanel();
-    notify('Bem-vindo ao painel!');
-  } else {
-    document.getElementById('passErr').style.display = 'block';
-    document.getElementById('passInput').value = '';
-    document.getElementById('passInput').focus();
+    if (id) {
+      update(ref(db, 'produtos/' + id), data)
+        .then(() => { showStatus('Produto atualizado! ✓', 'success'); resetForm(); })
+        .catch(() => showStatus('Erro ao atualizar.', 'error'));
+    } else {
+      push(productsRef, data)
+        .then(() => { showStatus('Produto adicionado! ✓', 'success'); resetForm(); })
+        .catch(() => showStatus('Erro ao salvar.', 'error'));
+    }
+  };
+
+  // ---- DELETAR ----
+  window.deleteProduct = function(id) {
+    if (!confirm('Remover este produto?')) return;
+    remove(ref(db, 'produtos/' + id));
+  };
+
+  // ---- EDITAR ----
+  window.editProduct = function(id, p) {
+    document.getElementById('edit-id').value = id;
+    document.getElementById('prod-name').value = p.nome || '';
+    document.getElementById('prod-desc').value = p.descricao || '';
+    document.getElementById('prod-img').value = p.imagem || '';
+    document.getElementById('prod-link').value = p.link || '';
+    document.getElementById('prod-badge').value = p.badge || 'EXCLUSIVO';
+    previewImg();
+    switchTab('add');
+    document.getElementById('modal-title').textContent = '✏️ EDITAR PRODUTO';
+  };
+
+  // ---- LISTA ADMIN ----
+  function renderAdminList(products) {
+    const list = document.getElementById('admin-list');
+    if (!list) return;
+    const entries = Object.entries(products || {});
+    if (entries.length === 0) {
+      list.innerHTML = '<p style="color:#555;text-align:center;padding:20px;">Nenhum produto cadastrado.</p>';
+      return;
+    }
+    list.innerHTML = entries.map(([id, p]) => `
+      <div class="admin-product-item">
+        <img src="${p.imagem || ''}" alt="" onerror="this.style.opacity='0'">
+        <div class="admin-item-info">
+          <div class="admin-item-name">${p.nome}</div>
+          <div class="admin-item-badge">${p.badge || ''}</div>
+        </div>
+        <div class="admin-item-actions">
+          <button class="btn-edit" onclick='editProduct("${id}", ${JSON.stringify(p)})'>Editar</button>
+          <button class="btn-delete" onclick='deleteProduct("${id}")'>Excluir</button>
+        </div>
+      </div>
+    `).join('');
   }
-}
-document.getElementById('passInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkPass(); });
+</script>
 
-function doLogout() {
-  isLogged = false;
-  document.getElementById('gearBtn').classList.remove('logged');
-  closePanel();
-  notify('Saiu do painel.');
-}
+<script>
+  const ADMIN_PASS = "admin123"; // TROQUE ESSA SENHA!
+  let loggedIn = false;
 
-// ─── PAINEL ───
-function openPanel() { document.getElementById('adminPanel').classList.add('open'); }
-function closePanel() { document.getElementById('adminPanel').classList.remove('open'); }
-
-// ─── MODAL PRODUTO ───
-function openModal(id = null) {
-  editId = id;
-  document.getElementById('modalTitle').textContent = id ? 'EDITAR PRODUTO' : 'NOVO PRODUTO';
-  document.getElementById('deleteRow').style.display = id ? 'block' : 'none';
-  if (id) {
-    const p = products.find(x => x.id === id);
-    if (!p) return;
-    document.getElementById('fName').value = p.name;
-    document.getElementById('fDesc').value = p.desc;
-    document.getElementById('fCat').value = p.cat;
-    document.getElementById('fLink').value = p.link;
-    document.getElementById('fImg').value = p.img || '';
-    document.getElementById('fBadge').value = p.badge || '';
-    const prev = document.getElementById('imgPreview');
-    if (p.img) { prev.src = p.img; prev.classList.add('show'); } else { prev.classList.remove('show'); }
-  } else {
-    ['fName','fDesc','fLink','fImg'].forEach(i => document.getElementById(i).value = '');
-    document.getElementById('fCat').value = 'Ebook';
-    document.getElementById('fBadge').value = '';
-    document.getElementById('imgPreview').classList.remove('show');
+  function openAdmin() {
+    document.getElementById('modal-overlay').classList.add('active');
+    if (loggedIn) showPanel();
   }
-  document.getElementById('modalBg').classList.add('open');
-}
 
-function openEdit(id) { openModal(id); }
-function closeModal() { document.getElementById('modalBg').classList.remove('open'); editId = null; }
-function closeModalBg(e) { if (e.target === document.getElementById('modalBg')) closeModal(); }
+  function closeAdmin() {
+    document.getElementById('modal-overlay').classList.remove('active');
+  }
 
-function previewImg() {
-  const url = document.getElementById('fImg').value.trim();
-  const prev = document.getElementById('imgPreview');
-  if (url) { prev.src = url; prev.classList.add('show'); } else { prev.classList.remove('show'); }
-}
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('modal-overlay')) closeAdmin();
+  }
 
-function saveProduct() {
-  const name = document.getElementById('fName').value.trim();
-  const desc = document.getElementById('fDesc').value.trim();
-  const link = document.getElementById('fLink').value.trim();
-  if (!name || !desc || !link) { notify('Preencha os campos obrigatórios', true); return; }
-  const prod = { id: editId || Date.now(), name, desc, cat: document.getElementById('fCat').value, link, img: document.getElementById('fImg').value.trim(), badge: document.getElementById('fBadge').value };
-  if (editId) { products[products.findIndex(p => p.id === editId)] = prod; notify('Produto atualizado!'); }
-  else { products.push(prod); notify('Produto adicionado!'); }
-  save(); render(); closeModal();
-}
+  function doLogin() {
+    const pass = document.getElementById('admin-password').value;
+    if (pass === ADMIN_PASS) {
+      loggedIn = true;
+      showPanel();
+    } else {
+      document.getElementById('login-error').style.display = 'block';
+    }
+  }
 
-function deleteProduct() {
-  if (!editId || !confirm('Excluir este produto?')) return;
-  products = products.filter(p => p.id !== editId);
-  save(); render(); closeModal(); notify('Produto excluído.');
-}
+  function doLogout() {
+    loggedIn = false;
+    document.getElementById('admin-panel').classList.remove('active');
+    document.getElementById('login-section').style.display = 'block';
+    document.getElementById('admin-password').value = '';
+    document.getElementById('modal-title').textContent = '🔐 ACESSO ADMIN';
+    closeAdmin();
+  }
 
-function quickDelete(id) {
-  if (!confirm('Excluir este produto?')) return;
-  products = products.filter(p => p.id !== id);
-  save(); render(); notify('Produto excluído.');
-}
+  function showPanel() {
+    document.getElementById('login-section').style.display = 'none';
+    document.getElementById('admin-panel').classList.add('active');
+    document.getElementById('modal-title').textContent = '⚙ PAINEL ADMIN';
+  }
 
-// ─── NOTIFY ───
-let notifTimer;
-function notify(msg, isErr = false) {
-  const el = document.getElementById('notif');
-  el.querySelector('.dot').style.background = isErr ? '#e74c3c' : 'var(--green)';
-  el.style.borderColor = isErr ? '#e74c3c' : 'var(--green)';
-  document.getElementById('notifMsg').textContent = msg;
-  el.classList.add('show');
-  clearTimeout(notifTimer);
-  notifTimer = setTimeout(() => el.classList.remove('show'), 3000);
-}
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', (tab==='add'&&i===0)||(tab==='list'&&i===1)));
+    document.getElementById('tab-add').classList.toggle('active', tab==='add');
+    document.getElementById('tab-list').classList.toggle('active', tab==='list');
+    if (tab === 'add') {
+      document.getElementById('modal-title').textContent = document.getElementById('edit-id').value ? '✏️ EDITAR PRODUTO' : '⚙ PAINEL ADMIN';
+    }
+  }
 
-window.addEventListener('scroll', () => { document.getElementById('header').classList.toggle('scrolled', window.scrollY > 50); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closePanel(); closePass(); } });
+  function resetForm() {
+    document.getElementById('edit-id').value = '';
+    document.getElementById('prod-name').value = '';
+    document.getElementById('prod-desc').value = '';
+    document.getElementById('prod-img').value = '';
+    document.getElementById('prod-link').value = '';
+    document.getElementById('prod-badge').value = 'EXCLUSIVO';
+    document.getElementById('img-preview').classList.remove('show');
+    document.getElementById('modal-title').textContent = '⚙ PAINEL ADMIN';
+    hideStatus();
+  }
+
+  function previewImg() {
+    const url = document.getElementById('prod-img').value.trim();
+    const preview = document.getElementById('img-preview');
+    if (url) { preview.src = url; preview.classList.add('show'); }
+    else { preview.classList.remove('show'); }
+  }
+
+  function showStatus(msg, type) {
+    const el = document.getElementById('status-msg');
+    el.textContent = msg;
+    el.className = 'status-msg ' + type;
+    setTimeout(hideStatus, 3000);
+  }
+
+  function hideStatus() {
+    const el = document.getElementById('status-msg');
+    el.className = 'status-msg';
+  }
 </script>
 </body>
 </html>
